@@ -34,7 +34,7 @@ function FloatingCode({ text, position, rotation, speed }: {
   rotation: [number, number, number]
   speed: number
 }) {
-  const ref = useRef<THREE.Mesh>(null!)
+  const ref = useRef<THREE.Group>(null!)
 
   useFrame((state) => {
     const t = state.clock.elapsedTime
