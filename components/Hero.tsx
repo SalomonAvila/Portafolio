@@ -28,7 +28,7 @@ export default function Hero() {
     let rightPaddleY = 0.5
 
     function animate() {
-      if (!container) return
+      if (!container || !ball || !leftPaddle || !rightPaddle) return
       const w = container.clientWidth
       const h = container.clientHeight
       const ballHalfW = (ball.offsetWidth / 2) / w
