@@ -143,100 +143,105 @@ function getTreePositions(count: number) {
 }
 
 function lerp(a: number, b: number, t: number) {
-  return a + (b - a) * t
+  return a + (b - a) * Math.min(1, Math.max(0, t))
+}
+
+function easeOutCubic(t: number) {
+  return 1 - Math.pow(1 - t, 3)
 }
 
 export default function IntroAnimation({ onComplete }: { onComplete: () => void }) {
   const containerRef = useRef<HTMLDivElement>(null)
   const svgRef = useRef<SVGSVGElement>(null)
+  const circleRef = useRef<HTMLDivElement>(null)
   const [progress, setProgress] = useState(0)
-  const [done, setDone] = useState(false)
+  const completedRef = useRef(false)
+
+  // Measure circle position from SVG root node
   const [circlePos, setCirclePos] = useState({ x: 0, y: 0 })
 
-  // Measure root node position in viewport
-  const measureCircle = useCallback(() => {
-    if (!svgRef.current) return
-    const svg = svgRef.current
-    const svgRect = svg.getBoundingClientRect()
-    // Root node is at SVG (250, 50), SVG is 500x420
-    const scaleX = svgRect.width / 500
-    const scaleY = svgRect.height / 420
-    const x = svgRect.left + 250 * scaleX
-    const y = svgRect.top + 50 * scaleY
-    setCirclePos({ x, y })
+  useEffect(() => {
+    function measure() {
+      if (!svgRef.current) return
+      const rect = svgRef.current.getBoundingClientRect()
+      // Root node at SVG (250, 50), SVG viewBox is 500x420
+      setCirclePos({
+        x: rect.left + (250 / 500) * rect.width,
+        y: rect.top + (50 / 420) * rect.height,
+      })
+    }
+    measure()
+    window.addEventListener('resize', measure)
+    window.addEventListener('scroll', measure, { passive: true })
+    return () => {
+      window.removeEventListener('resize', measure)
+      window.removeEventListener('scroll', measure)
+    }
   }, [])
 
+  // Pure scroll-driven progress — no timers, no phases
   useEffect(() => {
-    measureCircle()
-    window.addEventListener('resize', measureCircle)
-    return () => window.removeEventListener('resize', measureCircle)
-  }, [measureCircle])
+    function onScroll() {
+      if (!containerRef.current || completedRef.current) return
+      const rect = containerRef.current.getBoundingClientRect()
+      const scrollHeight = containerRef.current.scrollHeight - window.innerHeight
+      if (scrollHeight <= 0) return
+      const p = Math.max(0, Math.min(1, -rect.top / scrollHeight))
+      setProgress(p)
 
-  const handleScroll = useCallback(() => {
-    if (!containerRef.current || done) return
-    const rect = containerRef.current.getBoundingClientRect()
-    const scrollHeight = containerRef.current.scrollHeight - window.innerHeight
-    const scrolled = -rect.top
-    const p = Math.max(0, Math.min(1, scrolled / scrollHeight))
-    setProgress(p)
-
-    if (p >= 0.99) {
-      setDone(true)
-      window.scrollTo(0, 0)
-      onComplete()
+      if (p >= 0.99) {
+        completedRef.current = true
+        window.scrollTo(0, 0)
+        onComplete()
+      }
     }
-  }, [done, onComplete])
+    window.addEventListener('scroll', onScroll, { passive: true })
+    onScroll()
+    return () => window.removeEventListener('scroll', onScroll)
+  }, [onComplete])
 
-  useEffect(() => {
-    window.addEventListener('scroll', handleScroll, { passive: true })
-    return () => window.removeEventListener('scroll', handleScroll)
-  }, [handleScroll])
+  // ---- All visual states derived from progress ----
 
-  // Progress zones:
-  // 0 - 0.80  → code + tree appear
-  // 0.80 - 0.90 → tree fully built, code fully shown
-  // 0.90 - 0.95 → pulse (root node glows)
-  // 0.95 - 1.00 → expand circle + fade content + color shift
+  // 0.00 - 0.75: code lines appear
+  const codeProgress = Math.min(1, progress / 0.75)
 
-  const codeProgress = Math.min(1, progress / 0.80)
+  // 0.05 - 0.80: tree nodes appear
   const treeProgress = Math.min(1, Math.max(0, (progress - 0.05) / 0.75))
-  const pulseProgress = Math.min(1, Math.max(0, (progress - 0.90) / 0.05))
-  const expandProgress = Math.min(1, Math.max(0, (progress - 0.95) / 0.05))
 
-  const visibleCodeLines = Math.min(
-    AVL_LINES.length,
-    Math.floor(codeProgress * AVL_LINES.length)
-  )
-  const visibleNodes = Math.min(
-    AVL_VALUES.length,
-    Math.floor(treeProgress * AVL_VALUES.length)
-  )
+  // 0.88 - 0.94: pulse (root node glows)
+  const pulse = Math.min(1, Math.max(0, (progress - 0.88) / 0.06))
+
+  // 0.94 - 1.00: expand circle + fade content
+  const expand = Math.min(1, Math.max(0, (progress - 0.94) / 0.06))
+
+  const visibleCodeLines = Math.min(AVL_LINES.length, Math.floor(codeProgress * AVL_LINES.length))
+  const visibleNodes = Math.min(AVL_VALUES.length, Math.floor(treeProgress * AVL_VALUES.length))
   const treePositions = getTreePositions(visibleNodes)
   const code = AVL_LINES.slice(0, visibleCodeLines).join('\n')
 
-  const isPulsing = pulseProgress > 0 && expandProgress === 0
-  const isExpanding = expandProgress > 0
+  const isPulsing = pulse > 0 && expand === 0
+  const isExpanding = expand > 0
 
+  // Circle scale: pulse grows to 1.4x, then expand goes to 55x
   const circleScale = isExpanding
-    ? 1 + expandProgress * 55
+    ? 1 + easeOutCubic(expand) * 54
     : isPulsing
-    ? 1 + pulseProgress * 0.5
+    ? 1 + pulse * 0.4
     : 1
 
-  const contentOpacity = isExpanding
-    ? Math.max(0, 1 - expandProgress * 2)
-    : 1
+  // Content fades out as circle expands
+  const contentOpacity = isExpanding ? Math.max(0, 1 - expand * 2.5) : 1
 
-  // Blue → dark
-  const circleR = Math.round(lerp(10, 10, expandProgress))
-  const circleG = Math.round(lerp(102, 10, expandProgress))
-  const circleB = Math.round(lerp(194, 15, expandProgress))
+  // Circle color: blue → dark
+  const circleR = Math.round(lerp(10, 10, expand))
+  const circleG = Math.round(lerp(102, 10, expand))
+  const circleB = Math.round(lerp(194, 15, expand))
   const circleColor = `rgb(${circleR}, ${circleG}, ${circleB})`
 
   return (
     <div ref={containerRef} style={{ height: '400vh' }} className="relative">
       <div className="sticky top-0 h-screen w-full overflow-hidden bg-[#0a0a0f]">
-        {/* Content */}
+        {/* Content — fades out when circle expands */}
         <div className="absolute inset-0 flex flex-col" style={{ opacity: contentOpacity }}>
           <div className="flex items-center justify-between px-6 py-3 border-b border-white/5">
             <div className="font-mono text-xs text-white/30">
@@ -323,16 +328,17 @@ export default function IntroAnimation({ onComplete }: { onComplete: () => void 
                 {treePositions.map((pos, i) => {
                   const isLast = i === visibleNodes - 1 && visibleNodes > 0
                   const isRoot = i === 0
+                  const showPulse = isRoot && isPulsing
                   return (
                     <g key={`n-${i}`}>
                       <circle
                         cx={pos.x}
                         cy={pos.y}
-                        r={isRoot && isPulsing ? 25 : 20}
-                        fill={isLast || (isRoot && isPulsing) ? '#0A66C2' : '#1a1a2e'}
-                        stroke={isLast || (isRoot && isPulsing) ? '#0A66C2' : '#ffffff20'}
-                        strokeWidth={isLast || (isRoot && isPulsing) ? 2.5 : 1}
-                        style={isRoot && isPulsing ? { filter: 'drop-shadow(0 0 15px #0A66C2)' } : undefined}
+                        r={showPulse ? 25 : 20}
+                        fill={isLast || showPulse ? '#0A66C2' : '#1a1a2e'}
+                        stroke={isLast || showPulse ? '#0A66C2' : '#ffffff20'}
+                        strokeWidth={isLast || showPulse ? 2.5 : 1}
+                        style={showPulse ? { filter: 'drop-shadow(0 0 15px #0A66C2)' } : undefined}
                       />
                       <text
                         x={pos.x}
@@ -362,6 +368,7 @@ export default function IntroAnimation({ onComplete }: { onComplete: () => void 
         {(isPulsing || isExpanding) && (
           <div className="absolute inset-0 pointer-events-none z-20 overflow-hidden">
             <div
+              ref={circleRef}
               className="absolute rounded-full"
               style={{
                 width: 40,
@@ -379,17 +386,15 @@ export default function IntroAnimation({ onComplete }: { onComplete: () => void 
         )}
 
         {/* Progress bar */}
-        {!done && (
-          <div className="absolute bottom-0 left-0 w-full h-0.5 bg-white/5 z-10">
-            <div
-              className="h-full bg-gradient-to-r from-primary to-accent"
-              style={{ width: `${progress * 100}%` }}
-            />
-          </div>
-        )}
+        <div className="absolute bottom-0 left-0 w-full h-0.5 bg-white/5 z-10">
+          <div
+            className="h-full bg-gradient-to-r from-primary to-accent"
+            style={{ width: `${progress * 100}%` }}
+          />
+        </div>
 
         {/* Hint */}
-        {!done && progress < 0.05 && (
+        {progress < 0.05 && (
           <div className="absolute bottom-3 left-1/2 -translate-x-1/2 flex items-center gap-2 text-white/20 text-[10px] font-mono z-10">
             <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
               <path d="M12 5v14M19 12l-7 7-7-7" />
