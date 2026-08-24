@@ -51,11 +51,9 @@ export default function Skills() {
     <section id="skills" className="py-32 px-6">
       <div className="max-w-5xl mx-auto">
         <div className="section-fade">
-          <p className="text-primary font-mono text-xs tracking-[0.3em] uppercase mb-2">
-            Tech Stack
-          </p>
-          <h2 className="text-3xl md:text-5xl font-black mb-16 tracking-tight">
-            Tools of the <span className="text-accent">Trade</span>
+          <p className="label-tag mb-4">./skills</p>
+          <h2 className="text-3xl md:text-5xl font-display font-bold mb-16 tracking-tight">
+            Tools of the trade
           </h2>
         </div>
 

@@ -2,7 +2,17 @@
 @tailwind components;
 @tailwind utilities;
 
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600;700&display=swap');
+
+:root {
+  --bg: #05070a;
+  --surface: #0b0f16;
+  --line: #1c2530;
+  --ink: #eef2f6;
+  --muted: #8892a0;
+  --signal: #3fa9f5;
+  --ack: #33d17a;
+}
 
 * {
   margin: 0;
@@ -15,14 +25,14 @@ html {
 }
 
 body {
-  background: #0a0a0f;
-  color: #e0e0e0;
+  background: var(--bg);
+  color: var(--ink);
   font-family: 'Inter', sans-serif;
   overflow-x: hidden;
 }
 
 ::selection {
-  background: #0A66C2;
+  background: var(--signal);
   color: white;
 }
 
@@ -31,24 +41,65 @@ body {
 }
 
 ::-webkit-scrollbar-track {
-  background: #0a0a0f;
+  background: var(--bg);
 }
 
 ::-webkit-scrollbar-thumb {
-  background: linear-gradient(180deg, #0A66C2, #4CAF50);
+  background: linear-gradient(180deg, var(--signal), var(--ack));
   border-radius: 3px;
 }
 
 .gradient-border {
   border: 1px solid transparent;
-  background: linear-gradient(#12121a, #12121a) padding-box,
-              linear-gradient(135deg, #0A66C230, #4CAF5030) border-box;
+  background: linear-gradient(var(--surface), var(--surface)) padding-box,
+              linear-gradient(135deg, #3fa9f530, #33d17a30) border-box;
   transition: all 0.3s ease;
 }
 
 .gradient-border:hover {
-  background: linear-gradient(#16161f, #16161f) padding-box,
-              linear-gradient(135deg, #0A66C260, #4CAF5060) border-box;
+  background: linear-gradient(#101623, #101623) padding-box,
+              linear-gradient(135deg, #3fa9f560, #33d17a60) border-box;
+}
+
+/* Terminal-style eyebrow label, e.g. [ ABOUT ] */
+.label-tag {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.7rem;
+  letter-spacing: 0.28em;
+  text-transform: uppercase;
+  color: var(--signal);
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.label-tag::before {
+  content: '';
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--ack);
+  box-shadow: 0 0 8px var(--ack);
+}
+
+/* Hairline divider with a node dot, echoes a network edge */
+.node-divider {
+  position: relative;
+  height: 1px;
+  background: linear-gradient(90deg, var(--line), transparent);
+}
+
+.node-divider::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: var(--signal);
+  box-shadow: 0 0 6px var(--signal);
 }
 
 @keyframes float {
@@ -147,4 +198,26 @@ body {
 
 .animate-fade-in {
   animation: fade-in 1s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+@keyframes bounce-down {
+  0%, 100% { transform: translateY(0); opacity: 0.7; }
+  50% { transform: translateY(6px); opacity: 1; }
+}
+
+.scroll-indicator {
+  animation: bounce-down 1.5s ease-in-out infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+  }
 }

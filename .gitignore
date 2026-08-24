@@ -6,3 +6,6 @@ out/
 .env.*.local
 *.log
 *.opencode
+.claude/
+.agents/
+skills-lock.json

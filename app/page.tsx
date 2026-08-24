@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useEffect } from 'react'
 import dynamic from 'next/dynamic'
 import Hero from '@/components/Hero'
 import About from '@/components/About'
@@ -9,19 +9,10 @@ import Projects from '@/components/Projects'
 import Contact from '@/components/Contact'
 import Navbar from '@/components/Navbar'
 
-const IntroAnimation = dynamic(() => import('@/components/IntroAnimation'), { ssr: false })
+const NetworkBackground = dynamic(() => import('@/components/NetworkBackground'), { ssr: false })
 
 export default function Home() {
-  const [introDone, setIntroDone] = useState(false)
-
   useEffect(() => {
-    if (introDone) {
-      window.scrollTo(0, 0)
-    }
-  }, [introDone])
-
-  useEffect(() => {
-    if (!introDone) return
     const observer = new IntersectionObserver(
       (entries) => {
         entries.forEach((entry) => {
@@ -34,21 +25,17 @@ export default function Home() {
     )
     document.querySelectorAll('.section-fade').forEach((el) => observer.observe(el))
     return () => observer.disconnect()
-  }, [introDone])
+  }, [])
 
   return (
     <main className="min-h-screen">
-      {!introDone && <IntroAnimation onComplete={() => setIntroDone(true)} />}
-      {introDone && (
-        <div className="animate-fade-in">
-          <Navbar />
-          <Hero />
-          <About />
-          <Skills />
-          <Projects />
-          <Contact />
-        </div>
-      )}
+      <NetworkBackground />
+      <Navbar />
+      <Hero />
+      <About />
+      <Skills />
+      <Projects />
+      <Contact />
     </main>
   )
 }

@@ -5,7 +5,7 @@ const links = [
     label: 'LinkedIn',
     href: 'https://co.linkedin.com/in/salomon-avila-271b49220',
     icon: 'in',
-    color: '#0A66C2',
+    color: '#3FA9F5',
   },
   {
     label: 'GitHub',
@@ -26,11 +26,9 @@ export default function Contact() {
     <section id="contact" className="py-32 px-6">
       <div className="max-w-3xl mx-auto text-center">
         <div className="section-fade">
-          <p className="text-primary font-mono text-xs tracking-[0.3em] uppercase mb-2">
-            Contact
-          </p>
-          <h2 className="text-3xl md:text-5xl font-black mb-6 tracking-tight">
-            Let&apos;s <span className="text-primary">Connect</span>
+          <p className="label-tag mb-4 justify-center">./contact</p>
+          <h2 className="text-3xl md:text-5xl font-display font-bold mb-6 tracking-tight">
+            Let&apos;s connect
           </h2>
           <p className="text-white/40 mb-12 max-w-lg mx-auto leading-relaxed text-sm">
             Seeking software engineering internships and junior roles in distributed

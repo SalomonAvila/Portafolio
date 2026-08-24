@@ -7,13 +7,17 @@ module.exports = {
   theme: {
     extend: {
       colors: {
-        primary: '#0A66C2',
-        accent: '#4CAF50',
-        dark: '#0a0a0f',
-        surface: '#12121a',
+        primary: '#3FA9F5',
+        accent: '#33D17A',
+        dark: '#05070A',
+        surface: '#0B0F16',
+        line: '#1C2530',
+        ink: '#EEF2F6',
+        muted: '#8892A0',
       },
       fontFamily: {
         mono: ['JetBrains Mono', 'Fira Code', 'monospace'],
+        display: ['Space Grotesk', 'Inter', 'sans-serif'],
       },
     },
   },

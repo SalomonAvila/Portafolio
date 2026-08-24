@@ -2,28 +2,63 @@
 
 const projects = [
   {
-    title: 'Distributed Systems Environment',
-    tags: ['C++', 'ZeroMQ', 'Docker', 'MQTT'],
+    title: 'Pa-lante',
+    subtitle: 'Platanus Hack 26 · Bogotá',
+    tags: ['TypeScript', 'Team of 4', 'Access track'],
     description:
-      'Publisher/Subscriber and Request/Response patterns using ZeroMQ and MQTT for reliable message delivery in high-latency scenarios.',
-    icon: '⟁',
-    color: '#0A66C2',
+      'Built in one weekend with a 4-person team for Platanus Hack Bogotá, on the Access track — idea to working product against the clock.',
+    icon: '⌁',
+    color: '#F5A623',
+    href: 'https://github.com/SalomonAvila/Pa-lante',
   },
   {
-    title: 'ACM Platform Ecosystem',
-    tags: ['TypeScript', 'Bun', 'GitHub Actions', 'ElysiaJS'],
+    title: 'VigilApp',
+    subtitle: 'ProyectoWeb',
+    tags: ['Angular', 'Spring Boot', 'PostgreSQL', 'Docker'],
     description:
-      'High-throughput RESTful services with integrated CI/CD, automated quality gates, and React/Angular frontend components.',
+      'Full-stack web application with an Angular frontend and a Java/Spring Boot backend, persisted in PostgreSQL and shipped via Docker Compose.',
     icon: '⟐',
-    color: '#4CAF50',
+    color: '#33D17A',
+    href: 'https://github.com/SalomonAvila/ProyectoWeb',
+    demo: 'https://proyecto-web-self.vercel.app',
   },
   {
-    title: 'Data Structures & Algorithms',
-    tags: ['C++', 'Graphs', 'AVL Trees', 'Optimization'],
+    title: 'Distributed Processing',
+    tags: ['Go', 'Concurrency', 'Distributed Systems'],
     description:
-      'Custom memory-efficient data structures for complex optimization problems. Graphs, AVL Trees, and algorithmic solutions.',
-    icon: '⟟',
+      'Distributed processing experiments in Go — concurrent workloads split across nodes, built to reason about coordination and throughput.',
+    icon: '⟠',
+    color: '#00ADD8',
+    href: 'https://github.com/SalomonAvila/DistributedProcessing',
+  },
+  {
+    title: 'Sistemas Distribuidos',
+    subtitle: 'Proyecto_sistemas_distribuidos',
+    tags: ['C++', 'ZeroMQ', 'PostgreSQL', 'Docker'],
+    description:
+      'C++ chosen for raw execution speed, ØMQ for pub/sub and request/response messaging, PostgreSQL and pgAdmin for persistence — all containerized.',
+    icon: '⟁',
+    color: '#3FA9F5',
+    href: 'https://github.com/SalomonAvila/Proyecto_sistemas_distribuidos',
+  },
+  {
+    title: 'Juego de Fonemas',
+    tags: ['Next.js', 'TypeScript', 'Education'],
+    description:
+      'An interactive phoneme game built with Next.js to help kids practice sound recognition — playful UI on top of a small learning loop.',
+    icon: '⟢',
     color: '#EA4335',
+    href: 'https://github.com/SalomonAvila/juego-fonemas',
+    demo: 'https://juego-fonemas.vercel.app',
+  },
+  {
+    title: 'Machine Learning',
+    tags: ['Python', 'Jupyter', 'Notebooks'],
+    description:
+      'Notebooks working through core machine learning models and techniques — from data prep to evaluation, one experiment at a time.',
+    icon: '⟟',
+    color: '#F7DF1E',
+    href: 'https://github.com/SalomonAvila/MachineLearning',
   },
 ]
 
@@ -32,19 +67,33 @@ export default function Projects() {
     <section id="projects" className="py-32 px-6">
       <div className="max-w-5xl mx-auto">
         <div className="section-fade">
-          <p className="text-primary font-mono text-xs tracking-[0.3em] uppercase mb-2">
-            Portfolio
-          </p>
-          <h2 className="text-3xl md:text-5xl font-black mb-16 tracking-tight">
-            Featured <span className="text-primary">Work</span>
+          <p className="label-tag mb-4">./projects</p>
+          <h2 className="text-3xl md:text-5xl font-display font-bold mb-4 tracking-tight">
+            Pulled straight from GitHub
           </h2>
+          <p className="text-white/40 max-w-xl mb-16 text-sm leading-relaxed">
+            A running log of what I&apos;ve shipped — hackathons, coursework, and
+            side projects. See everything at{' '}
+            <a
+              href="https://github.com/SalomonAvila"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-primary hover:underline"
+            >
+              github.com/SalomonAvila
+            </a>
+            .
+          </p>
         </div>
 
         <div className="grid md:grid-cols-3 gap-6">
           {projects.map((project) => (
-            <div
+            <a
               key={project.title}
-              className="gradient-border rounded-xl p-6 hover:scale-[1.03] transition-all duration-300 group section-fade"
+              href={project.href}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="gradient-border rounded-xl p-6 hover:scale-[1.03] transition-all duration-300 group section-fade flex flex-col"
             >
               <div
                 className="text-3xl mb-4 group-hover:scale-110 transition-transform duration-200"
@@ -52,11 +101,14 @@ export default function Projects() {
               >
                 {project.icon}
               </div>
-              <h3 className="text-base font-bold text-white mb-3">{project.title}</h3>
-              <p className="text-sm text-white/40 mb-5 leading-relaxed">
+              <h3 className="text-base font-bold text-white mb-1">{project.title}</h3>
+              {project.subtitle && (
+                <p className="text-[11px] font-mono text-white/25 mb-3">{project.subtitle}</p>
+              )}
+              <p className="text-sm text-white/40 mb-5 leading-relaxed flex-1">
                 {project.description}
               </p>
-              <div className="flex flex-wrap gap-2">
+              <div className="flex flex-wrap gap-2 mb-4">
                 {project.tags.map((tag) => (
                   <span
                     key={tag}
@@ -70,7 +122,12 @@ export default function Projects() {
                   </span>
                 ))}
               </div>
-            </div>
+              <div className="flex items-center gap-3 text-[11px] font-mono text-white/25 group-hover:text-white/50 transition-colors">
+                <span>view repo ↗</span>
+                {project.demo && <span className="text-white/15">·</span>}
+                {project.demo && <span>live demo</span>}
+              </div>
+            </a>
           ))}
         </div>
       </div>
