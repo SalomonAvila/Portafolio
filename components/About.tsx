@@ -39,7 +39,7 @@ export default function About() {
             {
               icon: '⌁',
               title: 'Building at Speed',
-              desc: 'Shipped Pa-lante at Platanus Hack Bogotá with a 4-person team &mdash; idea to working product in one weekend.',
+              desc: 'Shipped Pa-lante at Platanus Hack Bogotá with a 4-person team; idea to working product in one weekend.',
               color: '#F5A623',
             },
           ].map((card) => (
