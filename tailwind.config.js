@@ -6,18 +6,17 @@ module.exports = {
   ],
   theme: {
     extend: {
+      // 60 / 30 / 10 palette — keep the page to these three.
       colors: {
-        primary: '#3FA9F5',
-        accent: '#33D17A',
-        dark: '#05070A',
-        surface: '#0B0F16',
-        line: '#1C2530',
-        ink: '#EEF2F6',
-        muted: '#8892A0',
+        paper: '#F7F1E3', // 60% dominant
+        'paper-deep': '#ECE2CC',
+        ink: '#23304A', // 30% secondary
+        accent: '#FF6B4A', // 10% accent
       },
       fontFamily: {
-        mono: ['JetBrains Mono', 'Fira Code', 'monospace'],
-        display: ['Space Grotesk', 'Inter', 'sans-serif'],
+        display: ['var(--font-display)', 'Kalam', 'cursive'],
+        body: ['var(--font-body)', 'Patrick Hand', 'cursive'],
+        hand: ['var(--font-hand)', 'Caveat', 'cursive'],
       },
     },
   },

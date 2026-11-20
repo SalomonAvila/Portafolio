@@ -1,53 +1,39 @@
 'use client'
 
 const links = [
-  {
-    label: 'LinkedIn',
-    href: 'https://co.linkedin.com/in/salomon-avila-271b49220',
-    icon: 'in',
-    color: '#3FA9F5',
-  },
-  {
-    label: 'GitHub',
-    href: 'https://github.com/SalomonAvila',
-    icon: 'gh',
-    color: '#ffffff',
-  },
-  {
-    label: 'Email',
-    href: 'mailto:avila_sa@javeriana.edu.co',
-    icon: '@',
-    color: '#EA4335',
-  },
+  { label: 'LinkedIn', href: 'https://co.linkedin.com/in/salomon-avila-271b49220', icon: 'in' },
+  { label: 'GitHub', href: 'https://github.com/SalomonAvila', icon: 'gh' },
+  { label: 'Email', href: 'mailto:avila_sa@javeriana.edu.co', icon: '@' },
 ]
 
 export default function Contact() {
   return (
-    <section id="contact" className="py-32 px-6">
+    <section id="contact" className="ink-band no-bottom on-ink pt-32 pb-10 px-6 mt-12">
       <div className="max-w-3xl mx-auto text-center">
         <div className="section-fade">
-          <p className="label-tag mb-4 justify-center">./contact</p>
-          <h2 className="text-3xl md:text-5xl font-display font-bold mb-6 tracking-tight">
-            Let&apos;s connect
+          <p className="label-tag mb-5 justify-center">say hi</p>
+          <h2 className="text-4xl md:text-6xl font-display font-bold mb-6 leading-tight">
+            Let&apos;s <span className="squiggle">connect</span>
           </h2>
-          <p className="text-white/40 mb-12 max-w-lg mx-auto leading-relaxed text-sm">
+          <p className="text-paper/80 mb-14 max-w-lg mx-auto leading-relaxed text-lg md:text-xl">
             Seeking software engineering internships and junior roles in distributed
             systems and cloud-native development.
           </p>
         </div>
 
-        <div className="flex flex-col sm:flex-row gap-4 justify-center section-fade">
+        <div className="flex flex-col sm:flex-row gap-6 justify-center section-fade">
           {links.map((link) => (
             <a
               key={link.label}
               href={link.href}
               target="_blank"
               rel="noopener noreferrer"
-              className="gradient-border rounded-lg px-8 py-4 font-medium text-white/70 hover:text-white hover:scale-105 transition-all duration-200 flex items-center justify-center gap-3 group"
+              className="sketch-btn bg-paper text-ink px-7 py-3 text-xl font-display font-bold flex items-center justify-center gap-3 hover:bg-accent hover:text-paper group"
+              style={{ boxShadow: '4px 4px 0 var(--accent)', borderColor: 'var(--paper)' }}
             >
               <span
-                className="w-8 h-8 rounded-md flex items-center justify-center text-xs font-bold group-hover:scale-110 transition-transform"
-                style={{ backgroundColor: `${link.color}20`, color: link.color }}
+                className="w-8 h-8 flex items-center justify-center text-sm border-2 border-current"
+                style={{ borderRadius: 'var(--wobble-b)' }}
               >
                 {link.icon}
               </span>
@@ -56,9 +42,9 @@ export default function Contact() {
           ))}
         </div>
 
-        <div className="mt-24 border-t border-white/5 pt-8">
-          <p className="text-xs text-white/20 font-mono">
-            Built with Next.js &amp; Three.js &mdash; Bogotá, Colombia
+        <div className="mt-24 border-t-2 border-dashed border-paper/25 pt-8">
+          <p className="font-hand text-xl text-paper/60">
+            sketched with Next.js &amp; Three.js &mdash; Bogotá, Colombia ✎
           </p>
         </div>
       </div>

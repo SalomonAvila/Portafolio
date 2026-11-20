@@ -8,7 +8,6 @@ const projects = [
     description:
       'Built in one weekend with a 4-person team for Platanus Hack Bogotá, on the Access track — idea to working product against the clock.',
     icon: '⌁',
-    color: '#F5A623',
     href: 'https://github.com/SalomonAvila/Pa-lante',
   },
   {
@@ -18,7 +17,6 @@ const projects = [
     description:
       'Full-stack web application with an Angular frontend and a Java/Spring Boot backend, persisted in PostgreSQL and shipped via Docker Compose.',
     icon: '⟐',
-    color: '#33D17A',
     href: 'https://github.com/SalomonAvila/ProyectoWeb',
     demo: 'https://proyecto-web-self.vercel.app',
   },
@@ -28,7 +26,6 @@ const projects = [
     description:
       'Distributed processing experiments in Go — concurrent workloads split across nodes, built to reason about coordination and throughput.',
     icon: '⟠',
-    color: '#00ADD8',
     href: 'https://github.com/SalomonAvila/DistributedProcessing',
   },
   {
@@ -38,7 +35,6 @@ const projects = [
     description:
       'C++ chosen for raw execution speed, ØMQ for pub/sub and request/response messaging, PostgreSQL and pgAdmin for persistence — all containerized.',
     icon: '⟁',
-    color: '#3FA9F5',
     href: 'https://github.com/SalomonAvila/Proyecto_sistemas_distribuidos',
   },
   {
@@ -47,7 +43,6 @@ const projects = [
     description:
       'An interactive phoneme game built with Next.js to help kids practice sound recognition — playful UI on top of a small learning loop.',
     icon: '⟢',
-    color: '#EA4335',
     href: 'https://github.com/SalomonAvila/juego-fonemas',
     demo: 'https://juego-fonemas.vercel.app',
   },
@@ -57,7 +52,6 @@ const projects = [
     description:
       'Notebooks working through core machine learning models and techniques — from data prep to evaluation, one experiment at a time.',
     icon: '⟟',
-    color: '#F7DF1E',
     href: 'https://github.com/SalomonAvila/MachineLearning',
   },
 ]
@@ -67,18 +61,18 @@ export default function Projects() {
     <section id="projects" className="py-32 px-6">
       <div className="max-w-5xl mx-auto">
         <div className="section-fade">
-          <p className="label-tag mb-4">./projects</p>
-          <h2 className="text-3xl md:text-5xl font-display font-bold mb-4 tracking-tight">
-            Pulled straight from GitHub
+          <p className="label-tag mb-5">projects</p>
+          <h2 className="text-4xl md:text-6xl font-display font-bold mb-6 leading-tight">
+            Pulled straight from <span className="squiggle">GitHub</span>
           </h2>
-          <p className="text-white/40 max-w-xl mb-16 text-sm leading-relaxed">
+          <p className="text-ink/80 max-w-xl mb-20 text-lg md:text-xl leading-relaxed">
             A running log of what I&apos;ve shipped — hackathons, coursework, and
             side projects. See everything at{' '}
             <a
               href="https://github.com/SalomonAvila"
               target="_blank"
               rel="noopener noreferrer"
-              className="text-primary hover:underline"
+              className="marker font-bold"
             >
               github.com/SalomonAvila
             </a>
@@ -86,48 +80,53 @@ export default function Projects() {
           </p>
         </div>
 
-        <div className="grid md:grid-cols-3 gap-6">
+        <div className="grid sm:grid-cols-2 md:grid-cols-3 gap-x-8 gap-y-12 tilt">
           {projects.map((project) => (
-            <a
-              key={project.title}
-              href={project.href}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="gradient-border rounded-xl p-6 hover:scale-[1.03] transition-all duration-300 group section-fade flex flex-col"
-            >
-              <div
-                className="text-3xl mb-4 group-hover:scale-110 transition-transform duration-200"
-                style={{ color: project.color }}
-              >
-                {project.icon}
-              </div>
-              <h3 className="text-base font-bold text-white mb-1">{project.title}</h3>
-              {project.subtitle && (
-                <p className="text-[11px] font-mono text-white/25 mb-3">{project.subtitle}</p>
-              )}
-              <p className="text-sm text-white/40 mb-5 leading-relaxed flex-1">
-                {project.description}
-              </p>
-              <div className="flex flex-wrap gap-2 mb-4">
-                {project.tags.map((tag) => (
-                  <span
-                    key={tag}
-                    className="text-xs font-mono px-2 py-1 rounded"
-                    style={{
-                      color: project.color,
-                      backgroundColor: `${project.color}15`,
-                    }}
-                  >
-                    {tag}
+            <div key={project.title} className="section-fade">
+              <div className="sketch-box hoverable tape bg-paper p-6 pt-8 h-full flex flex-col group">
+                <div className="flex items-start justify-between mb-3">
+                  <h3 className="font-display text-2xl font-bold leading-tight">{project.title}</h3>
+                  <span className="text-2xl text-ink/70 group-hover:text-accent transition-colors ml-3">
+                    {project.icon}
                   </span>
-                ))}
+                </div>
+                {project.subtitle && (
+                  <p className="font-hand text-xl text-ink/60 -mt-2 mb-3">{project.subtitle}</p>
+                )}
+                <p className="text-base text-ink/80 mb-5 leading-snug flex-1">{project.description}</p>
+                <div className="flex flex-wrap gap-2 mb-5">
+                  {project.tags.map((tag) => (
+                    <span
+                      key={tag}
+                      className="text-sm px-2.5 py-0.5 border-[1.5px] border-ink/70 text-ink"
+                      style={{ borderRadius: 'var(--wobble-c)' }}
+                    >
+                      {tag}
+                    </span>
+                  ))}
+                </div>
+                <div className="flex items-center gap-4 font-hand text-xl font-bold border-t-2 border-dashed border-ink/25 pt-3">
+                  <a
+                    href={project.href}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="scribble-link"
+                  >
+                    view repo ↗
+                  </a>
+                  {project.demo && (
+                    <a
+                      href={project.demo}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="scribble-link"
+                    >
+                      live demo ↗
+                    </a>
+                  )}
+                </div>
               </div>
-              <div className="flex items-center gap-3 text-[11px] font-mono text-white/25 group-hover:text-white/50 transition-colors">
-                <span>view repo ↗</span>
-                {project.demo && <span className="text-white/15">·</span>}
-                {project.demo && <span>live demo</span>}
-              </div>
-            </a>
+            </div>
           ))}
         </div>
       </div>

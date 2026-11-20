@@ -6,10 +6,10 @@ import * as THREE from 'three'
 
 const NAME = 'Salomon Avila'
 const FONT_PX = 220
-const SAMPLE_STEP = 12
+const SAMPLE_STEP = 8
 const ALPHA_THRESHOLD = 140
 const MAX_NEIGHBORS = 4
-const NEIGHBOR_RADIUS = SAMPLE_STEP * 2.4
+const NEIGHBOR_RADIUS = SAMPLE_STEP * 2.6
 const PX_TO_UNIT = 1 / 85
 const Z_JITTER = 0.35
 const JITTER_AMPLITUDE = 0.018
@@ -25,9 +25,16 @@ type NameGraph = {
 // Draw the name to an offscreen canvas and keep every pixel above the alpha
 // threshold as a node — turns the glyph outlines into a point cloud we can
 // wire up like a network graph.
+// next/font exposes the hashed family name through a CSS variable on <html>.
+function displayFamily() {
+  const v = getComputedStyle(document.documentElement).getPropertyValue('--font-display').trim()
+  return v || '"Kalam", cursive'
+}
+
 function sampleName(): NameGraph {
+  const family = displayFamily()
   const measure = document.createElement('canvas').getContext('2d')!
-  measure.font = `700 ${FONT_PX}px "Space Grotesk", sans-serif`
+  measure.font = `700 ${FONT_PX}px ${family}`
   const textWidth = measure.measureText(NAME).width
 
   const canvasW = Math.ceil(textWidth + FONT_PX * 0.6)
@@ -36,7 +43,7 @@ function sampleName(): NameGraph {
   canvas.width = canvasW
   canvas.height = canvasH
   const ctx = canvas.getContext('2d')!
-  ctx.font = `700 ${FONT_PX}px "Space Grotesk", sans-serif`
+  ctx.font = `700 ${FONT_PX}px ${family}`
   ctx.fillStyle = '#fff'
   ctx.textAlign = 'center'
   ctx.textBaseline = 'middle'
@@ -122,8 +129,11 @@ function NameGraphMesh({ graph, groupRef }: { graph: NameGraph; groupRef: React.
   const maxEdges = graph.edges.length
   const linePositions = useMemo(() => new Float32Array(maxEdges * 2 * 3), [maxEdges])
   const lineColors = useMemo(() => new Float32Array(maxEdges * 2 * 3), [maxEdges])
-  const colorA = useMemo(() => new THREE.Color('#3fa9f5'), [])
-  const colorB = useMemo(() => new THREE.Color('#33d17a'), [])
+  // Ink strokes on paper; edges occasionally flash the coral accent.
+  const ink = useMemo(() => new THREE.Color('#23304a'), [])
+  const accent = useMemo(() => new THREE.Color('#ff6b4a'), [])
+  const paper = useMemo(() => new THREE.Color('#f7f1e3'), [])
+  const tmp = useMemo(() => new THREE.Color(), [])
 
   const reducedMotion = useMemo(
     () => typeof window !== 'undefined' && window.matchMedia('(prefers-reduced-motion: reduce)').matches,
@@ -140,8 +150,8 @@ function NameGraphMesh({ graph, groupRef }: { graph: NameGraph; groupRef: React.
     if (mountGroupRef.current) {
       mountGroupRef.current.scale.setScalar(0.92 + 0.08 * eased)
     }
-    if (pointsMaterialRef.current) pointsMaterialRef.current.opacity = 0.55 * eased
-    if (lineMaterialRef.current) lineMaterialRef.current.opacity = 0.35 * eased
+    if (pointsMaterialRef.current) pointsMaterialRef.current.opacity = 0.9 * eased
+    if (lineMaterialRef.current) lineMaterialRef.current.opacity = 0.9 * eased
 
     for (let i = 0; i < nodeCount; i++) {
       const bx = graph.positions[i * 3]
@@ -167,8 +177,10 @@ function NameGraphMesh({ graph, groupRef }: { graph: NameGraph; groupRef: React.
 
     for (let e = 0; e < maxEdges; e++) {
       const edge = graph.edges[e]
-      const pulse = reducedMotion ? 0.5 : (Math.sin(t * 0.6 + edge.phase) + 1) / 2
-      const c = colorA.clone().lerp(colorB, pulse)
+      const wave = reducedMotion ? 0 : (Math.sin(t * 0.6 + edge.phase) + 1) / 2
+      const pulse = Math.pow(wave, 10)
+      // Weak edges fade toward the paper color instead of toward black.
+      const c = tmp.copy(ink).lerp(accent, pulse).lerp(paper, (1 - edge.fade) * 0.5)
       const base = e * 6
       linePositions[base] = livePositions[edge.a * 3]
       linePositions[base + 1] = livePositions[edge.a * 3 + 1]
@@ -177,9 +189,9 @@ function NameGraphMesh({ graph, groupRef }: { graph: NameGraph; groupRef: React.
       linePositions[base + 4] = livePositions[edge.b * 3 + 1]
       linePositions[base + 5] = livePositions[edge.b * 3 + 2]
       for (let k = 0; k < 2; k++) {
-        lineColors[base + k * 3] = c.r * edge.fade
-        lineColors[base + k * 3 + 1] = c.g * edge.fade
-        lineColors[base + k * 3 + 2] = c.b * edge.fade
+        lineColors[base + k * 3] = c.r
+        lineColors[base + k * 3 + 1] = c.g
+        lineColors[base + k * 3 + 2] = c.b
       }
     }
 
@@ -198,7 +210,7 @@ function NameGraphMesh({ graph, groupRef }: { graph: NameGraph; groupRef: React.
         <group ref={mountGroupRef}>
           <points ref={pointsRef}>
             <bufferGeometry />
-            <pointsMaterial ref={pointsMaterialRef} size={0.05} color="#eef2f6" transparent opacity={0} sizeAttenuation />
+            <pointsMaterial ref={pointsMaterialRef} size={0.055} color="#23304a" transparent opacity={0} sizeAttenuation />
           </points>
           <lineSegments ref={linesRef}>
             <bufferGeometry />
@@ -220,7 +232,7 @@ export default function Name3D() {
     let cancelled = false
     async function build() {
       try {
-        await document.fonts.load(`700 ${FONT_PX}px "Space Grotesk"`)
+        await document.fonts.load(`700 ${FONT_PX}px ${displayFamily()}`)
         await document.fonts.ready
       } catch {
         // font API not available or load failed — sample with fallback font

@@ -2,16 +2,21 @@
 @tailwind components;
 @tailwind utilities;
 
-@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600;700&display=swap');
-
+/*
+ * Hand-drawn sketch theme — 60 / 30 / 10
+ *   60%  --paper   warm notebook paper (page background)
+ *   30%  --ink     graphite-blue ink (text, strokes, shadows, chalkboard bands)
+ *   10%  --accent  coral marker (highlights, hovers, doodles)
+ */
 :root {
-  --bg: #05070a;
-  --surface: #0b0f16;
-  --line: #1c2530;
-  --ink: #eef2f6;
-  --muted: #8892a0;
-  --signal: #3fa9f5;
-  --ack: #33d17a;
+  --paper: #f7f1e3;
+  --paper-deep: #ece2cc;
+  --ink: #23304a;
+  --accent: #ff6b4a;
+
+  --wobble-a: 255px 15px 225px 15px / 15px 225px 15px 255px;
+  --wobble-b: 15px 255px 15px 225px / 225px 15px 255px 15px;
+  --wobble-c: 225px 25px 255px 20px / 20px 255px 25px 225px;
 }
 
 * {
@@ -25,115 +30,234 @@ html {
 }
 
 body {
-  background: var(--bg);
+  background-color: var(--paper);
+  /* dotted notebook paper */
+  background-image: radial-gradient(rgba(35, 48, 74, 0.11) 1.1px, transparent 1.3px);
+  background-size: 24px 24px;
   color: var(--ink);
-  font-family: 'Inter', sans-serif;
+  font-family: var(--font-body), 'Patrick Hand', cursive;
+  font-size: 1.125rem;
   overflow-x: hidden;
 }
 
 ::selection {
-  background: var(--signal);
-  color: white;
+  background: var(--accent);
+  color: var(--paper);
 }
 
 ::-webkit-scrollbar {
-  width: 5px;
+  width: 10px;
 }
 
 ::-webkit-scrollbar-track {
-  background: var(--bg);
+  background: var(--paper);
 }
 
 ::-webkit-scrollbar-thumb {
-  background: linear-gradient(180deg, var(--signal), var(--ack));
-  border-radius: 3px;
+  background: var(--ink);
+  border: 3px solid var(--paper);
+  border-radius: var(--wobble-a);
 }
 
-.gradient-border {
-  border: 1px solid transparent;
-  background: linear-gradient(var(--surface), var(--surface)) padding-box,
-              linear-gradient(135deg, #3fa9f530, #33d17a30) border-box;
-  transition: all 0.3s ease;
+/* ---------- Sketch primitives ---------- */
+
+/* Hand-drawn box: wobbly border + flat offset shadow */
+.sketch-box {
+  --stroke: var(--ink);
+  position: relative;
+  border: 2px solid var(--stroke);
+  border-radius: var(--wobble-a);
+  box-shadow: 4px 4px 0 var(--stroke);
+  transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
 }
 
-.gradient-border:hover {
-  background: linear-gradient(#101623, #101623) padding-box,
-              linear-gradient(135deg, #3fa9f560, #33d17a60) border-box;
+.sketch-box:nth-child(3n + 2) {
+  border-radius: var(--wobble-b);
 }
 
-/* Terminal-style eyebrow label, e.g. [ ABOUT ] */
+.sketch-box:nth-child(3n) {
+  border-radius: var(--wobble-c);
+}
+
+.sketch-box.hoverable:hover {
+  transform: translate(-2px, -2px) rotate(-0.6deg);
+  box-shadow: 7px 7px 0 var(--accent);
+}
+
+/* Slight alternating tilt, like cards dropped on a desk */
+.tilt > *:nth-child(odd) {
+  rotate: -0.8deg;
+}
+
+.tilt > *:nth-child(even) {
+  rotate: 0.7deg;
+}
+
+/* Masking tape on top of a card */
+.tape::before {
+  content: '';
+  position: absolute;
+  top: -14px;
+  left: 50%;
+  width: 84px;
+  height: 26px;
+  transform: translateX(-50%) rotate(-3deg);
+  background: rgba(236, 226, 204, 0.85);
+  border-left: 1px dashed rgba(35, 48, 74, 0.25);
+  border-right: 1px dashed rgba(35, 48, 74, 0.25);
+  box-shadow: 0 1px 2px rgba(35, 48, 74, 0.15);
+}
+
+/* Highlighter swipe behind text */
+.marker {
+  background-image: linear-gradient(
+    100deg,
+    transparent 0.5%,
+    rgba(255, 107, 74, 0.55) 2%,
+    rgba(255, 107, 74, 0.38) 50%,
+    rgba(255, 107, 74, 0.55) 97%,
+    transparent 99%
+  );
+  background-repeat: no-repeat;
+  background-size: 100% 0.45em;
+  background-position: 0 88%;
+  padding: 0 0.15em;
+  -webkit-box-decoration-break: clone;
+  box-decoration-break: clone;
+}
+
+/* Wavy hand-drawn underline */
+.squiggle {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='40' height='10' viewBox='0 0 40 10'%3E%3Cpath d='M0 5 Q 5 0 10 5 T 20 5 T 30 5 T 40 5' fill='none' stroke='%23ff6b4a' stroke-width='2.5' stroke-linecap='round'/%3E%3C/svg%3E");
+  background-repeat: repeat-x;
+  background-size: 28px 9px;
+  background-position: 0 100%;
+  display: inline-block;
+  line-height: 1.05;
+  padding-bottom: 0.18em;
+}
+
+/* Underline that draws itself on hover */
+.scribble-link {
+  background-image: linear-gradient(var(--accent), var(--accent));
+  background-repeat: no-repeat;
+  background-size: 0% 3px;
+  background-position: 0 95%;
+  transition: background-size 0.25s ease;
+}
+
+.scribble-link:hover {
+  background-size: 100% 3px;
+}
+
+/* Section eyebrow, handwritten in marker */
 .label-tag {
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 0.7rem;
-  letter-spacing: 0.28em;
-  text-transform: uppercase;
-  color: var(--signal);
+  font-family: var(--font-hand), 'Caveat', cursive;
+  font-size: 1.6rem;
+  font-weight: 700;
+  line-height: 1;
+  color: var(--accent);
   display: inline-flex;
   align-items: center;
-  gap: 0.5rem;
+  gap: 0.4rem;
+  rotate: -2deg;
 }
 
 .label-tag::before {
-  content: '';
-  width: 6px;
-  height: 6px;
-  border-radius: 50%;
-  background: var(--ack);
-  box-shadow: 0 0 8px var(--ack);
+  content: '✎';
+  font-size: 1.1rem;
+  color: var(--ink);
 }
 
-/* Hairline divider with a node dot, echoes a network edge */
-.node-divider {
+.on-ink .label-tag::before {
+  color: var(--paper);
+}
+
+/* Chalkboard band in ink color with torn/wavy edges */
+.ink-band {
   position: relative;
-  height: 1px;
-  background: linear-gradient(90deg, var(--line), transparent);
+  background-color: var(--ink);
+  background-image: radial-gradient(rgba(247, 241, 227, 0.07) 1.1px, transparent 1.3px);
+  background-size: 24px 24px;
+  color: var(--paper);
 }
 
-.node-divider::before {
+.ink-band::before,
+.ink-band::after {
   content: '';
   position: absolute;
   left: 0;
-  top: 50%;
-  transform: translateY(-50%);
-  width: 5px;
-  height: 5px;
-  border-radius: 50%;
-  background: var(--signal);
-  box-shadow: 0 0 6px var(--signal);
+  right: 0;
+  height: 22px;
+  background-repeat: repeat-x;
+  background-size: 120px 22px;
+  pointer-events: none;
 }
 
+.ink-band::before {
+  top: -21px;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='22' viewBox='0 0 120 22' preserveAspectRatio='none'%3E%3Cpath d='M0 22 L0 12 C 15 4, 25 16, 40 10 S 70 2, 85 11 S 110 6, 120 12 L120 22 Z' fill='%2323304a'/%3E%3C/svg%3E");
+}
+
+.ink-band::after {
+  bottom: -21px;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='22' viewBox='0 0 120 22' preserveAspectRatio='none'%3E%3Cpath d='M0 0 L0 10 C 15 18, 25 6, 40 12 S 70 20, 85 11 S 110 16, 120 10 L120 0 Z' fill='%2323304a'/%3E%3C/svg%3E");
+}
+
+.ink-band.no-bottom::after {
+  display: none;
+}
+
+.on-ink .sketch-box {
+  --stroke: var(--paper);
+}
+
+/* Solid marker button */
+.sketch-btn {
+  border: 2px solid var(--ink);
+  border-radius: var(--wobble-a);
+  box-shadow: 3px 3px 0 var(--ink);
+  transition: transform 0.15s ease, box-shadow 0.15s ease, background-color 0.15s ease;
+}
+
+.sketch-btn:hover {
+  transform: translate(-2px, -2px);
+  box-shadow: 5px 5px 0 var(--ink);
+}
+
+.sketch-btn:active {
+  transform: translate(2px, 2px);
+  box-shadow: 1px 1px 0 var(--ink);
+}
+
+/* ---------- Motion ---------- */
+
 @keyframes float {
-  0%, 100% { transform: translateY(0px); }
-  50% { transform: translateY(-10px); }
+  0%, 100% { transform: translateY(0px) rotate(0deg); }
+  50% { transform: translateY(-8px) rotate(3deg); }
 }
 
 .animate-float {
   animation: float 6s ease-in-out infinite;
 }
 
-@keyframes pulse-glow {
-  0%, 100% { box-shadow: 0 0 5px rgba(10, 102, 194, 0.2), 0 0 10px rgba(10, 102, 194, 0.1); }
-  50% { box-shadow: 0 0 15px rgba(10, 102, 194, 0.4), 0 0 30px rgba(10, 102, 194, 0.2); }
+@keyframes wiggle {
+  0%, 100% { transform: rotate(-3deg); }
+  50% { transform: rotate(3deg); }
 }
 
-.pulse-glow {
-  animation: pulse-glow 3s ease-in-out infinite;
+.wiggle {
+  animation: wiggle 2.4s ease-in-out infinite;
 }
 
-@keyframes gradient-shift {
-  0% { background-position: 0% 50%; }
-  50% { background-position: 100% 50%; }
-  100% { background-position: 0% 50%; }
+@keyframes draw {
+  to { stroke-dashoffset: 0; }
 }
 
-.animate-gradient {
-  background-size: 200% 200%;
-  animation: gradient-shift 4s ease infinite;
-}
-
-@keyframes scan-line {
-  0% { transform: translateY(-100%); }
-  100% { transform: translateY(100vh); }
+.draw-in {
+  stroke-dasharray: 400;
+  stroke-dashoffset: 400;
+  animation: draw 1.6s ease-out 0.6s forwards;
 }
 
 .section-fade {
@@ -146,58 +270,6 @@ body {
 .section-fade.visible {
   opacity: 1;
   transform: translateY(0);
-}
-
-@keyframes typing {
-  from { width: 0; }
-  to { width: 100%; }
-}
-
-@keyframes blink {
-  0%, 100% { opacity: 1; }
-  50% { opacity: 0; }
-}
-
-.typing-effect {
-  overflow: hidden;
-  white-space: nowrap;
-  border-right: 2px solid #0A66C2;
-  animation: typing 2s steps(30) 1s forwards, blink 0.8s step-end infinite;
-  width: 0;
-}
-
-@keyframes grid-scroll {
-  0% { transform: perspective(500px) rotateX(60deg) translateY(0); }
-  100% { transform: perspective(500px) rotateX(60deg) translateY(50px); }
-}
-
-.grid-bg {
-  animation: grid-scroll 2s linear infinite;
-}
-
-@keyframes spin-slow {
-  from { transform: rotate(0deg); }
-  to { transform: rotate(360deg); }
-}
-
-.spin-slow {
-  animation: spin-slow 20s linear infinite;
-}
-
-@keyframes particle-drift {
-  0% { transform: translateY(0) translateX(0); opacity: 0; }
-  10% { opacity: 1; }
-  90% { opacity: 1; }
-  100% { transform: translateY(-100vh) translateX(50px); opacity: 0; }
-}
-
-@keyframes fade-in {
-  from { opacity: 0; transform: translateY(30px) scale(0.98); }
-  to { opacity: 1; transform: translateY(0) scale(1); }
-}
-
-.animate-fade-in {
-  animation: fade-in 1s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
 
 @keyframes bounce-down {

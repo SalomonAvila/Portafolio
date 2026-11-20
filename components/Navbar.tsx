@@ -21,34 +21,24 @@ export default function Navbar() {
   return (
     <nav
       className={`fixed top-0 w-full z-50 transition-all duration-500 ${
-        scrolled
-          ? 'bg-dark/85 backdrop-blur-xl border-b border-line py-3'
-          : 'bg-transparent py-5'
+        scrolled ? 'bg-paper/95 border-b-2 border-dashed border-ink/40 py-2' : 'bg-transparent py-5'
       }`}
     >
       <div className="max-w-6xl mx-auto px-6 flex items-center justify-between">
-        <a href="#" className="font-mono text-sm font-medium tracking-tight flex items-center gap-2">
-          <span className="w-1.5 h-1.5 rounded-full bg-accent shadow-[0_0_8px_#33D17A]" />
-          <span className="text-white/50">sa</span>
-          <span className="text-primary">@</span>
-          <span className="text-white/50">bogota</span>
-          <span className="text-white/30">:~$</span>
+        <a href="#" className="font-display text-2xl font-bold text-ink flex items-baseline">
+          salomon<span className="text-accent">.</span>
         </a>
-        <div className="hidden md:flex items-center gap-1">
+        <div className="hidden md:flex items-center gap-6 font-hand text-2xl font-medium">
           {links.map((link) => (
-            <a
-              key={link.href}
-              href={link.href}
-              className="font-mono text-xs text-white/40 hover:text-primary transition-colors duration-200 px-3 py-2 rounded-md hover:bg-primary/5"
-            >
-              ./{link.label}
+            <a key={link.href} href={link.href} className="scribble-link text-ink">
+              {link.label}
             </a>
           ))}
           <a
             href="https://github.com/SalomonAvila"
             target="_blank"
             rel="noopener noreferrer"
-            className="font-mono text-xs text-white/40 hover:text-primary transition-colors duration-200 px-3 py-2 rounded-md hover:bg-primary/5"
+            className="sketch-btn bg-paper text-ink px-4 py-0.5 hover:bg-accent hover:text-paper"
           >
             github ↗
           </a>

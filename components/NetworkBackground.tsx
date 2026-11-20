@@ -33,8 +33,11 @@ function Mesh() {
   const linePositions = useMemo(() => new Float32Array(maxEdges * 2 * 3), [maxEdges])
   const lineColors = useMemo(() => new Float32Array(maxEdges * 2 * 3), [maxEdges])
 
-  const colorA = useMemo(() => new THREE.Color('#3fa9f5'), [])
-  const colorB = useMemo(() => new THREE.Color('#33d17a'), [])
+  // Faint pencil graph on paper, with a rare coral flash.
+  const ink = useMemo(() => new THREE.Color('#23304a'), [])
+  const accent = useMemo(() => new THREE.Color('#ff6b4a'), [])
+  const paper = useMemo(() => new THREE.Color('#f7f1e3'), [])
+  const tmp = useMemo(() => new THREE.Color(), [])
 
   const reducedMotion = useMemo(
     () => typeof window !== 'undefined' && window.matchMedia('(prefers-reduced-motion: reduce)').matches,
@@ -60,8 +63,9 @@ function Mesh() {
       for (let j = i + 1; j < NODE_COUNT && edgeCount < maxEdges; j++) {
         const d = nodes[i].pos.distanceTo(nodes[j].pos)
         if (d < CONNECT_DIST) {
-          const pulse = (Math.sin(t * 0.6 + nodes[i].phase) + 1) / 2
-          const c = colorA.clone().lerp(colorB, pulse)
+          const pulse = Math.pow((Math.sin(t * 0.6 + nodes[i].phase) + 1) / 2, 12)
+          const fade = 1 - d / CONNECT_DIST
+          const c = tmp.copy(ink).lerp(accent, pulse).lerp(paper, 1 - fade)
           const base = edgeCount * 6
           linePositions[base] = nodes[i].pos.x
           linePositions[base + 1] = nodes[i].pos.y
@@ -69,11 +73,10 @@ function Mesh() {
           linePositions[base + 3] = nodes[j].pos.x
           linePositions[base + 4] = nodes[j].pos.y
           linePositions[base + 5] = nodes[j].pos.z
-          const fade = 1 - d / CONNECT_DIST
           for (let k = 0; k < 2; k++) {
-            lineColors[base + k * 3] = c.r * fade
-            lineColors[base + k * 3 + 1] = c.g * fade
-            lineColors[base + k * 3 + 2] = c.b * fade
+            lineColors[base + k * 3] = c.r
+            lineColors[base + k * 3 + 1] = c.g
+            lineColors[base + k * 3 + 2] = c.b
           }
           edgeCount++
         }
@@ -100,11 +103,11 @@ function Mesh() {
     <group>
       <points ref={pointsRef}>
         <bufferGeometry />
-        <pointsMaterial size={0.045} color="#3fa9f5" transparent opacity={0.55} sizeAttenuation />
+        <pointsMaterial size={0.05} color="#23304a" transparent opacity={0.35} sizeAttenuation />
       </points>
       <lineSegments ref={linesRef}>
         <bufferGeometry />
-        <lineBasicMaterial vertexColors transparent opacity={0.35} />
+        <lineBasicMaterial vertexColors transparent opacity={0.3} />
       </lineSegments>
     </group>
   )
@@ -112,7 +115,7 @@ function Mesh() {
 
 export default function NetworkBackground() {
   return (
-    <div className="fixed inset-0 -z-10 pointer-events-none opacity-70">
+    <div className="fixed inset-0 -z-10 pointer-events-none opacity-60">
       <Canvas
         camera={{ position: [0, 0, 6], fov: 50 }}
         dpr={[1, 1.5]}

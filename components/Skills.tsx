@@ -1,83 +1,39 @@
 'use client'
 
 const categories = [
-  {
-    title: 'Languages',
-    icon: '⟨/⟩',
-    skills: [
-      { name: 'Java', color: '#ED8B00' },
-      { name: 'TypeScript', color: '#3178C6' },
-      { name: 'Python', color: '#3776AB' },
-      { name: 'C++', color: '#00599C' },
-      { name: 'Bun', color: '#ffffff' },
-    ],
-  },
-  {
-    title: 'Frameworks',
-    icon: '⌘',
-    skills: [
-      { name: 'Spring Boot', color: '#6DB33F' },
-      { name: 'Angular', color: '#DD0031' },
-      { name: 'FastAPI', color: '#009688' },
-      { name: 'ElysiaJS', color: '#ffffff' },
-      { name: 'Express.js', color: '#333333' },
-    ],
-  },
-  {
-    title: 'Infrastructure',
-    icon: '⎈',
-    skills: [
-      { name: 'Docker', color: '#2496ED' },
-      { name: 'Kubernetes', color: '#326CE5' },
-      { name: 'Linux', color: '#FCC624' },
-      { name: 'GitHub Actions', color: '#2088FF' },
-      { name: 'Git', color: '#F05032' },
-    ],
-  },
-  {
-    title: 'Messaging',
-    icon: '⟁',
-    skills: [
-      { name: 'ZeroMQ', color: '#DF0000' },
-      { name: 'MQTT', color: '#3C5280' },
-      { name: 'REST APIs', color: '#0A66C2' },
-      { name: 'Event-Driven', color: '#4CAF50' },
-    ],
-  },
+  { title: 'Languages', icon: '⟨/⟩', skills: ['Java', 'TypeScript', 'Python', 'C++', 'Bun'] },
+  { title: 'Frameworks', icon: '⌘', skills: ['Spring Boot', 'Angular', 'FastAPI', 'ElysiaJS', 'Express.js'] },
+  { title: 'Infrastructure', icon: '⎈', skills: ['Docker', 'Kubernetes', 'Linux', 'GitHub Actions', 'Git'] },
+  { title: 'Messaging', icon: '⟁', skills: ['ZeroMQ', 'MQTT', 'REST APIs', 'Event-Driven'] },
 ]
 
 export default function Skills() {
   return (
-    <section id="skills" className="py-32 px-6">
+    <section id="skills" className="ink-band on-ink py-28 px-6 my-12">
       <div className="max-w-5xl mx-auto">
         <div className="section-fade">
-          <p className="label-tag mb-4">./skills</p>
-          <h2 className="text-3xl md:text-5xl font-display font-bold mb-16 tracking-tight">
-            Tools of the trade
+          <p className="label-tag mb-5">skills</p>
+          <h2 className="text-4xl md:text-6xl font-display font-bold mb-16 leading-tight">
+            Tools of the <span className="squiggle">trade</span>
           </h2>
         </div>
 
-        <div className="grid md:grid-cols-2 gap-8">
+        <div className="grid md:grid-cols-2 gap-x-12 gap-y-12">
           {categories.map((cat) => (
             <div key={cat.title} className="section-fade">
               <div className="flex items-center gap-3 mb-5">
-                <span className="text-primary text-lg">{cat.icon}</span>
-                <h3 className="text-base font-bold text-white/80">{cat.title}</h3>
+                <span className="text-accent text-2xl">{cat.icon}</span>
+                <h3 className="font-display text-2xl font-bold">{cat.title}</h3>
               </div>
-              <div className="flex flex-wrap gap-2.5">
+              <div className="flex flex-wrap gap-3 tilt">
                 {cat.skills.map((skill) => (
-                  <div
-                    key={skill.name}
-                    className="gradient-border rounded-lg px-4 py-2.5 flex items-center gap-2.5 hover:scale-105 transition-all duration-200 cursor-default group"
+                  <span
+                    key={skill}
+                    className="sketch-box hoverable px-4 py-1.5 text-lg cursor-default"
+                    style={{ boxShadow: '3px 3px 0 var(--stroke)' }}
                   >
-                    <span
-                      className="w-2 h-2 rounded-full group-hover:shadow-lg transition-shadow"
-                      style={{ backgroundColor: skill.color, boxShadow: `0 0 6px ${skill.color}40` }}
-                    />
-                    <span className="text-sm text-white/60 group-hover:text-white transition-colors font-mono">
-                      {skill.name}
-                    </span>
-                  </div>
+                    {skill}
+                  </span>
                 ))}
               </div>
             </div>
