@@ -2,6 +2,15 @@
 
 const projects = [
   {
+    title: 'memtop',
+    subtitle: 'Terminal system monitor · Linux',
+    tags: ['Rust', 'ratatui', 'TUI', 'Linux'],
+    description:
+      'System info and a live monitor of CPU, memory, disks, GPU, network and processes in a single terminal screen. One static binary, English and Spanish UI.',
+    icon: '▤',
+    href: 'https://github.com/SalomonAvila/memtop',
+  },
+  {
     title: 'Pa-lante',
     subtitle: 'Platanus Hack 26 · Bogotá',
     tags: ['TypeScript', 'Team of 4', 'Access track'],

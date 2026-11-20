@@ -260,6 +260,48 @@ body {
   animation: draw 1.6s ease-out 0.6s forwards;
 }
 
+/* Hero title: "Avila" as an outlined sticker with a coral offset */
+.outline-word {
+  color: var(--paper);
+  -webkit-text-stroke: 6px var(--ink);
+  paint-order: stroke fill;
+  text-shadow: 6px 6px 0 var(--accent);
+}
+
+/* System sketch: ripple when a node fires */
+@keyframes ping {
+  from { opacity: 0.9; transform: scale(1); }
+  to { opacity: 0; transform: scale(1.9); }
+}
+
+.node-ping {
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: ping 0.7s ease-out forwards;
+}
+
+@keyframes pop {
+  0% { transform: scale(1); }
+  40% { transform: scale(1.08) rotate(-2deg); }
+  100% { transform: scale(1); }
+}
+
+.node-pop {
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: pop 0.35s ease-out;
+}
+
+/* Mobile menu panel */
+@keyframes menu-drop {
+  from { opacity: 0; transform: translateY(-12px) rotate(-2deg); }
+  to { opacity: 1; transform: translateY(0) rotate(-1deg); }
+}
+
+.menu-drop {
+  animation: menu-drop 0.25s ease-out forwards;
+}
+
 .section-fade {
   opacity: 0;
   transform: translateY(30px);

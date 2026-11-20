@@ -17,6 +17,7 @@ module.exports = {
         display: ['var(--font-display)', 'Kalam', 'cursive'],
         body: ['var(--font-body)', 'Patrick Hand', 'cursive'],
         hand: ['var(--font-hand)', 'Caveat', 'cursive'],
+        name: ['var(--font-name)', 'Allo', 'system-ui', 'sans-serif'],
       },
     },
   },

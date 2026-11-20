@@ -19,6 +19,13 @@ const hand = localFont({
   ],
   variable: '--font-hand',
 })
+// Allo (npm: allo-font) — friendly rounded variable sans for the hero name and logo.
+// "Friendly" build: roundness fixed at 50, about half the size of the full variable.
+const name = localFont({
+  src: '../node_modules/allo-font/fonts/webfonts/AlloVariableFriendly.woff2',
+  weight: '100 900',
+  variable: '--font-name',
+})
 
 export const metadata: Metadata = {
   title: 'Salomon Avila | Software Engineer',
@@ -31,7 +38,7 @@ export default function RootLayout({
   children: React.ReactNode
 }) {
   return (
-    <html lang="en" className={`${display.variable} ${body.variable} ${hand.variable}`}>
+    <html lang="en" className={`${display.variable} ${body.variable} ${hand.variable} ${name.variable}`}>
       <body>{children}</body>
     </html>
   )
